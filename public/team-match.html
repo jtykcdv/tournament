@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Matches</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Search Matches by Team</h1>
+        <nav>
+            <a href="/index.html">Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Find Matches for a Specific Team</h2>
+
+        <div id="average-goals-container"></div>
+
+        <div>
+            <label for="team-filter">Select Team:</label>
+            <select id="team-filter" onchange="fetchTeamMatches()">
+                <option value="">-- Select a Team --</option>
+                <option value="Argentina">Argentina</option>
+                <option value="Brazil">Brazil</option>
+                <option value="France">France</option>
+                <option value="Germany">Germany</option>
+                <option value="Spain">Spain</option>
+                <option value="Italy">Italy</option>
+                <option value="England">England</option>
+                <option value="Belgium">Belgium</option>
+                <option value="Netherlands">Netherlands</option>
+                <option value="Portugal">Portugal</option>
+                <option value="Croatia">Croatia</option>
+                <option value="Uruguay">Uruguay</option>
+                <option value="Switzerland">Switzerland</option>
+                <option value="Denmark">Denmark</option>
+                <option value="Mexico">Mexico</option>
+                <option value="USA">USA</option>
+                <option value="Colombia">Colombia</option>
+                <option value="Japan">Japan</option>
+                <option value="South Korea">South Korea</option>
+                <option value="Senegal">Senegal</option>
+                <option value="Poland">Poland</option>
+                <option value="Sweden">Sweden</option>
+                <option value="Chile">Chile</option>
+                <option value="Morocco">Morocco</option>
+                <option value="Iran">Iran</option>
+                <option value="Serbia">Serbia</option>
+                <option value="Wales">Wales</option>
+                <option value="Ukraine">Ukraine</option>
+                <option value="Ghana">Ghana</option>
+                <option value="Norway">Norway</option>
+                <option value="Czech Republic">Czech Republic</option>
+                <option value="Nigeria">Nigeria</option>
+                <option value="Algeria">Algeria</option>
+                <option value="Tunisia">Tunisia</option>
+                <option value="Austria">Austria</option>
+                <option value="Slovakia">Slovakia</option>
+                <option value="Paraguay">Paraguay</option>
+                <option value="Peru">Peru</option>
+                <option value="Scotland">Scotland</option>
+                <option value="Costa Rica">Costa Rica</option>
+                <option value="Turkey">Turkey</option>
+                <option value="Russia">Russia</option>
+                <option value="Saudi Arabia">Saudi Arabia</option>
+                <option value="Ivory Coast">Ivory Coast</option>
+                <option value="Ecuador">Ecuador</option>
+                <option value="Venezuela">Venezuela</option>
+                <option value="Australia">Australia</option>
+                <option value="Cameroon">Cameroon</option>
+                <option value="South Africa">South Africa</option>
+                <option value="Hungary">Hungary</option>
+                <option value="Romania">Romania</option>
+                <option value="Slovenia">Slovenia</option>
+                <option value="Greece">Greece</option>
+                <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+                <option value="Egypt">Egypt</option>
+                <option value="Qatar">Qatar</option>
+                <option value="New Zealand">New Zealand</option>
+                <option value="Canada">Canada</option>
+                <option value="Finland">Finland</option>
+            </select>
+        </div>
+        <div id="team-matches-container"></div>
+    </main>
+
+    <script>
+        async function fetchTeamMatches() {
+    const team = document.getElementById('team-filter').value;
+    const container = document.getElementById('team-matches-container');
+    const avgGoalsContainer = document.getElementById('average-goals-container');
+
+    if (!team) {
+        container.innerHTML = '<p>Please select a team.</p>';
+        avgGoalsContainer.innerHTML = '';
+        return;
+    }
+
+    // Fetch matches for the team
+    const matchesResponse = await fetch(`/matches/team/${team}`);
+    if (matchesResponse.ok) {
+        const matches = await matchesResponse.json();
+        container.innerHTML = '';
+
+        if (matches.length === 0) {
+            container.innerHTML = `<p>No matches found for ${team}.</p>`;
+            avgGoalsContainer.innerHTML = '';
+            return;
+        }
+
+        let totalGoals = 0;
+
+        // Render matches
+        matches.forEach(match => {
+            const winner = determineWinner(match);
+            const bgColor = getBackgroundColor(team, winner);
+
+            const matchDiv = document.createElement('div');
+            matchDiv.style.backgroundColor = bgColor;
+            matchDiv.style.padding = '10px';
+            matchDiv.style.borderRadius = '5px';
+            matchDiv.style.marginBottom = '10px';
+
+            // Add only team-specific goals to the total
+            const teamGoals = (match.country1 === team) ? match.score1 : match.score2;
+            totalGoals += teamGoals;
+
+            matchDiv.innerHTML = `
+                <p><strong>Date:</strong> ${new Date(match.date).toLocaleDateString()}</p>
+                <p><strong>Match:</strong> ${match.country1} vs ${match.country2}</p>
+                <p><strong>Score:</strong> ${match.score1} - ${match.score2}</p>
+                <p><strong>Winner:</strong> ${winner}</p>
+                <hr>
+            `;
+            container.appendChild(matchDiv);
+        });
+
+        // Calculate and display average goals per match
+        const averageGoals = totalGoals / matches.length;
+        avgGoalsContainer.innerHTML = `
+            <p><strong>Average Goals per Match for ${team}:</strong> ${averageGoals.toFixed(2)}</p>
+        `;
+    } else {
+        container.innerHTML = '<p>Failed to fetch matches. Please try again later.</p>';
+    }
+}
+
+// Determine the winner of the match
+function determineWinner(match) {
+    if (match.score1 > match.score2) {
+        return match.country1;
+    } else if (match.score2 > match.score1) {
+        return match.country2;
+    } else {
+        return 'Draw';
+    }
+}
+
+// Get background color based on match outcome
+function getBackgroundColor(team, winner) {
+    if (winner === team) {
+        return 'lightgreen'; // Team won
+    } else if (winner === 'Draw') {
+        return 'lightgray'; // Match was a draw
+    } else {
+        return 'lightcoral'; // Team lost
+    }
+}
+
+    </script>
+</body>
+</html>

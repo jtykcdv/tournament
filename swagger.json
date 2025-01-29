@@ -1,0 +1,162 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FIFA Matches API",
+    "version": "1.0.0",
+    "description": "API for managing FIFA World Cup matches, including adding, viewing, filtering, and deleting matches."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/matches": {
+      "get": {
+        "summary": "Get all matches",
+        "description": "Retrieve a list of all FIFA matches stored in the database.",
+        "responses": {
+          "200": {
+            "description": "List of matches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Match"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a new match",
+        "description": "Add a new FIFA match to the database.",
+        "requestBody": {
+          "description": "Details of the match to be added",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Match"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Match added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Match"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/matches/{id}": {
+      "delete": {
+        "summary": "Delete a match",
+        "description": "Delete a FIFA match by its unique ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the match to be deleted",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Match deleted successfully"
+          },
+          "404": {
+            "description": "Match not found"
+          }
+        }
+      }
+    },
+    "/matches/{country}": {
+      "get": {
+        "summary": "Get matches by country",
+        "description": "Retrieve a list of matches involving the specified country.",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "path",
+            "required": true,
+            "description": "Name of the country",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matches involving the country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Match"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No matches found for the specified country"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Match": {
+        "type": "object",
+        "properties": {
+          "country1": {
+            "type": "string",
+            "description": "Name of the first country"
+          },
+          "country2": {
+            "type": "string",
+            "description": "Name of the second country"
+          },
+          "score1": {
+            "type": "integer",
+            "description": "Score of the first country"
+          },
+          "score2": {
+            "type": "integer",
+            "description": "Score of the second country"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the match"
+          },
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier for the match"
+          }
+        },
+        "required": ["country1", "country2", "score1", "score2", "date"]
+      }
+    }
+  }
+}

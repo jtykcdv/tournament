@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA Matches</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>FIFA World Cup Matches</h1>
+        <nav>
+            <a href="/add-match.html">Add Match</a>
+            <a href="/team-match.html">Search Team Matches</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>All Matches</h2>
+        <div id="matches-container"></div>
+    </main>
+
+    <script>
+        // Fetch all matches on page load
+        async function fetchMatches() {
+            const response = await fetch('/matches');
+            const matches = await response.json();
+            displayMatches(matches);
+        }
+
+        // Display matches in the container
+        function displayMatches(matches) {
+            const container = document.getElementById('matches-container');
+            container.innerHTML = ''; // Clear existing content
+
+            if (matches.length === 0) {
+                container.innerHTML = '<p>No matches found.</p>';
+                return;
+            }
+
+            matches.forEach(match => {
+                const winner = determineWinner(match);
+
+                const matchDiv = document.createElement('div');
+                matchDiv.innerHTML = `
+                    <p><strong>Date:</strong> ${new Date(match.date).toLocaleDateString()}</p>
+                    <p><strong>Match:</strong> ${match.country1} vs ${match.country2}</p>
+                    <p><strong>Score:</strong> ${match.score1} - ${match.score2}</p>
+                    <p><strong>Winner:</strong> ${winner}</p>
+                    <button onclick="deleteMatch('${match._id}')" style="color: red; background: none; border: none; font-size: 1rem; cursor: pointer;">
+                        ❌
+                    </button>
+                    <hr>
+                `;
+                container.appendChild(matchDiv);
+            });
+        }
+
+        // Determine winner based on scores
+        function determineWinner(match) {
+            if (match.score1 > match.score2) {
+                return match.country1;
+            } else if (match.score2 > match.score1) {
+                return match.country2;
+            } else {
+                return 'Draw';
+            }
+        }
+
+        // Delete match functionality
+        async function deleteMatch(matchId) {
+            if (confirm('Are you sure you want to delete this match?')) {
+                const response = await fetch(`/matches/${matchId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    alert('Match deleted successfully!');
+                    fetchMatches(); // Refresh matches
+                } else {
+                    alert('Failed to delete match.');
+                }
+            }
+        }
+
+        fetchMatches(); // Initial fetch on page load
+    </script>
+</body>
+</html>
