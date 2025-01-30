@@ -1,9 +1,3 @@
-
-Możesz skopiować poniższy tekst i zapisać go jako plik .md, np. tournament.md:
-
-markdown
-Kopiuj
-Edytuj
 # 🏆 Tournament
 
 ## 📖 Description
