@@ -19,7 +19,6 @@ This is an application for documenting soccer matches.
 - ⚡ **JavaScript**
 - 📄 **HTML**
 - 🎨 **CSS**
-- ⚛️ **React**
 
 ### 🖥️ Backend
 - 🚀 **Node.js**
