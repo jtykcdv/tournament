@@ -10,7 +10,7 @@ This is an application for documenting soccer matches.
 ✅ Add matches ⚽  
 
 📡 All the data is sent to, or from the database using **REST API** architecture.  
-🛠️ The project is containerized with **Docker** for easy installation and automatically generates easy-to-read documentation.
+🛠️ The project is containerized with **Docker** for easy installation and automatically generates easy-to-read, documentation.
 
 ---
 
